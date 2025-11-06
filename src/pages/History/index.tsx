@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
 import { sessionRepo, planRepo, exerciseRepo } from '@/domain/repositories/impl';
 import { useAuthStore } from '@/stores/authStore';
 import type { SessionEntry, WorkoutPlan, Exercise } from '@/domain/types';
@@ -16,12 +15,7 @@ export default function History() {
   const [selectedPlan, setSelectedPlan] = useState<string>('');
   const [selectedSession, setSelectedSession] = useState<SessionEntry | null>(null);
 
-  useEffect(() => {
-    if (!user) return;
-    loadData();
-  }, [user, selectedPlan]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!user) return;
     const [allSessions, allPlans, allExercises] = await Promise.all([
       selectedPlan
@@ -33,7 +27,12 @@ export default function History() {
     setSessions(allSessions.sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime()));
     setPlans(allPlans);
     setExercises(allExercises);
-  };
+  }, [user, selectedPlan]);
+
+  useEffect(() => {
+    if (!user) return;
+    loadData();
+  }, [user, selectedPlan, loadData]);
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this session?')) return;

@@ -13,11 +13,22 @@ export default function Session() {
   const [plan, setPlan] = useState<WorkoutPlan | null>(null);
   const [exercises, setExercises] = useState<Exercise[]>([]);
   const [phase, setPhase] = useState<'preflight' | 'active' | 'summary'>('preflight');
-  const { currentSession, isActive, loadActiveSession, startSession } = useSessionStore();
+  const { currentSession, loadActiveSession, startSession } = useSessionStore();
+
+  const loadPlan = async () => {
+    if (!planId) return;
+    const loaded = await planRepo.getById(planId);
+    setPlan(loaded);
+  };
+
+  const loadExercises = async () => {
+    const all = await exerciseRepo.getAll();
+    setExercises(all);
+  };
 
   useEffect(() => {
     loadActiveSession();
-  }, []);
+  }, [loadActiveSession]);
 
   useEffect(() => {
     if (currentSession && !currentSession.endedAt) {
@@ -34,18 +45,8 @@ export default function Session() {
       loadPlan();
     }
     loadExercises();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [planId]);
-
-  const loadPlan = async () => {
-    if (!planId) return;
-    const loaded = await planRepo.getById(planId);
-    setPlan(loaded);
-  };
-
-  const loadExercises = async () => {
-    const all = await exerciseRepo.getAll();
-    setExercises(all);
-  };
 
   const handleStart = async () => {
     await startSession(plan?.id);

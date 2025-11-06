@@ -1,5 +1,4 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useAuthStore } from '@/stores/authStore';
 import { cn } from '@/utils/cn';
 
 interface LayoutProps {
@@ -8,7 +7,6 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
-  const { user } = useAuthStore();
 
   const navItems = [
     { path: '/', label: 'Home', icon: '🏠' },

@@ -28,10 +28,14 @@ export function initializeRepositories() {
       useGoogleSheets = parsed.enabled === true;
       
       if (useGoogleSheets && parsed.apiKey && parsed.spreadsheetId) {
-        const { googleSheetsService } = require('@/services/googleSheets');
-        googleSheetsService.initialize({
-          apiKey: parsed.apiKey,
-          spreadsheetId: parsed.spreadsheetId,
+        // Dynamic import to avoid loading Google Sheets service when not needed
+        import('@/services/googleSheets').then(({ googleSheetsService }) => {
+          googleSheetsService.initialize({
+            apiKey: parsed.apiKey,
+            spreadsheetId: parsed.spreadsheetId,
+          });
+        }).catch((e) => {
+          console.error('Failed to load Google Sheets service', e);
         });
       }
     } catch (e) {

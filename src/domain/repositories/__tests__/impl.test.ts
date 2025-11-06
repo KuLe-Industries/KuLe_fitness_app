@@ -1,14 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import localForage from 'localforage';
 import { exerciseRepo } from '../impl';
 
 // Mock localForage
 vi.mock('localforage', () => {
-  const storage: Record<string, any> = {};
+  const storage: Record<string, unknown> = {};
   return {
     default: {
       getItem: vi.fn((key: string) => Promise.resolve(storage[key] || null)),
-      setItem: vi.fn((key: string, value: any) => {
+      setItem: vi.fn((key: string, value: unknown) => {
         storage[key] = value;
         return Promise.resolve(value);
       }),

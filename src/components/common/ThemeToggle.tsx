@@ -28,7 +28,7 @@ export default function ThemeToggle() {
       mediaQuery.addEventListener('change', handleChange);
       return () => mediaQuery.removeEventListener('change', handleChange);
     }
-  }, [user?.preferences.theme]);
+  }, [user]);
 
   const toggleTheme = () => {
     if (!user) return;

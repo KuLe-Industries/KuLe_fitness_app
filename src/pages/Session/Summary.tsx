@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import type { SessionEntry, Exercise } from '@/domain/types';
-import { exerciseRepo } from '@/domain/repositories/impl';
 import Button from '@/components/common/Button';
 import { format } from 'date-fns';
 

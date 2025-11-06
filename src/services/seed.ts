@@ -1,27 +1,5 @@
-import type { Exercise, WorkoutPlan } from '@/domain/types';
+import type { Exercise } from '@/domain/types';
 import { exerciseRepo, planRepo } from '@/domain/repositories/impl';
-
-const MUSCLE_GROUPS = [
-  'Chest',
-  'Back',
-  'Shoulders',
-  'Biceps',
-  'Triceps',
-  'Legs',
-  'Glutes',
-  'Core',
-  'Cardio',
-];
-
-const EQUIPMENT = [
-  'Dumbbell',
-  'Barbell',
-  'Bodyweight',
-  'Cable',
-  'Machine',
-  'Kettlebell',
-  'Resistance Band',
-];
 
 export const seedExercises: Omit<Exercise, 'id'>[] = [
   // Chest

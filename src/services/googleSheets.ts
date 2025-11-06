@@ -14,7 +14,7 @@ class GoogleSheetsService {
     this.config = config;
   }
 
-  private async request(endpoint: string, method: string = 'GET', body?: any) {
+  private async request(endpoint: string, method: string = 'GET', body?: unknown) {
     if (!this.config) {
       throw new Error('Google Sheets not initialized. Please configure in Settings.');
     }
@@ -42,7 +42,7 @@ class GoogleSheetsService {
     return response.json();
   }
 
-  async appendRow(sheetName: string, values: any[]) {
+  async appendRow(sheetName: string, values: unknown[]) {
     // First, ensure headers exist
     await this.ensureHeaders(sheetName);
     
@@ -91,7 +91,7 @@ class GoogleSheetsService {
     return this.request(endpoint);
   }
 
-  async updateRange(sheetName: string, range: string, values: any[][]) {
+  async updateRange(sheetName: string, range: string, values: unknown[][]) {
     const endpoint = `values/${sheetName}!${range}?valueInputOption=RAW`;
     return this.request(endpoint, 'PUT', {
       values,
@@ -103,7 +103,7 @@ class GoogleSheetsService {
     return this.request(endpoint, 'POST');
   }
 
-  async batchUpdate(requests: any[]) {
+  async batchUpdate(requests: unknown[]) {
     const endpoint = `values:batchUpdate`;
     return this.request(endpoint, 'POST', {
       valueInputOption: 'RAW',
@@ -115,7 +115,7 @@ class GoogleSheetsService {
 export const googleSheetsService = new GoogleSheetsService();
 
 // Helper functions for specific data types
-export async function saveUserToSheets(user: any) {
+export async function saveUserToSheets(user: { id: string; displayName: string; preferences: unknown }) {
   const values = [
     user.id,
     user.displayName,
@@ -125,7 +125,7 @@ export async function saveUserToSheets(user: any) {
   await googleSheetsService.appendRow('Users', values);
 }
 
-export async function saveExerciseToSheets(exercise: any) {
+export async function saveExerciseToSheets(exercise: { id: string; name: string; muscleGroups: string[]; equipment?: string[]; tags?: string[]; instructions?: string }) {
   const values = [
     exercise.id,
     exercise.name,
@@ -138,7 +138,7 @@ export async function saveExerciseToSheets(exercise: any) {
   await googleSheetsService.appendRow('Exercises', values);
 }
 
-export async function savePlanToSheets(plan: any) {
+export async function savePlanToSheets(plan: { id: string; name: string; description?: string; blocks: unknown; schedule?: unknown; createdAt: string; updatedAt: string; isFavorite: boolean }) {
   const values = [
     plan.id,
     plan.name,
@@ -152,7 +152,7 @@ export async function savePlanToSheets(plan: any) {
   await googleSheetsService.appendRow('Plans', values);
 }
 
-export async function saveSessionToSheets(session: any) {
+export async function saveSessionToSheets(session: { id: string; userId: string; planId?: string; startedAt: string; endedAt?: string; notes?: string; items: unknown }) {
   const values = [
     session.id,
     session.userId,

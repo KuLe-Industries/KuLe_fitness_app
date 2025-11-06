@@ -12,11 +12,6 @@ export default function Home() {
   const [sessions, setSessions] = useState<SessionEntry[]>([]);
   const [nextWorkout, setNextWorkout] = useState<WorkoutPlan | null>(null);
 
-  useEffect(() => {
-    if (!user) return;
-    loadData();
-  }, [user]);
-
   const loadData = async () => {
     if (!user) return;
     const allPlans = await planRepo.getAll();
@@ -28,6 +23,12 @@ export default function Home() {
     const scheduled = allPlans.find((p) => p.schedule);
     setNextWorkout(scheduled || allPlans[0] || null);
   };
+
+  useEffect(() => {
+    if (!user) return;
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const weekStart = startOfWeek(new Date(), { weekStartsOn: 1 });
   const weekDays = eachDayOfInterval({ start: weekStart, end: endOfWeek(weekStart) });

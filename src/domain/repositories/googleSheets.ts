@@ -60,14 +60,17 @@ class GoogleSheetsExerciseRepository implements ExerciseRepository {
       const data = await googleSheetsService.getRange('Exercises', 'A2:G1000');
       if (!data.values) return [];
       
-      return data.values.map((row: any[]) => ({
-        id: row[0],
-        name: row[1],
-        muscleGroups: row[2] ? row[2].split(', ').filter((g: string) => g) : [],
-        equipment: row[3] ? row[3].split(', ').filter((e: string) => e) : [],
-        tags: row[4] ? row[4].split(', ').filter((t: string) => t) : [],
-        instructions: row[5] || undefined,
-      }));
+      return data.values.map((row: unknown[]) => {
+        const typedRow = row as string[];
+        return {
+          id: typedRow[0],
+          name: typedRow[1],
+          muscleGroups: typedRow[2] ? typedRow[2].split(', ').filter((g: string) => g) : [],
+          equipment: typedRow[3] ? typedRow[3].split(', ').filter((e: string) => e) : [],
+          tags: typedRow[4] ? typedRow[4].split(', ').filter((t: string) => t) : [],
+          instructions: typedRow[5] || undefined,
+        };
+      });
     } catch (error) {
       console.error('Failed to get exercises from Google Sheets:', error);
       return [];
@@ -100,9 +103,10 @@ class GoogleSheetsExerciseRepository implements ExerciseRepository {
     return updated;
   }
 
-  async delete(id: ExerciseId): Promise<void> {
+  async delete(_exerciseId: ExerciseId): Promise<void> {
     // Deletion in Google Sheets requires finding and clearing the row
     // This is a simplified version - in production you'd want proper row deletion
+    void _exerciseId;
     console.warn('Delete operation not fully implemented for Google Sheets');
   }
 
@@ -139,16 +143,19 @@ class GoogleSheetsPlanRepository implements PlanRepository {
       const data = await googleSheetsService.getRange('Plans', 'A2:H1000');
       if (!data.values) return [];
       
-      return data.values.map((row: any[]) => ({
-        id: row[0],
-        name: row[1],
-        description: row[2] || undefined,
-        blocks: JSON.parse(row[3]),
-        schedule: row[4] ? JSON.parse(row[4]) : undefined,
-        createdAt: row[5],
-        updatedAt: row[6],
-        isFavorite: row[7] === 'TRUE',
-      }));
+      return data.values.map((row: unknown[]) => {
+        const typedRow = row as string[];
+        return {
+          id: typedRow[0],
+          name: typedRow[1],
+          description: typedRow[2] || undefined,
+          blocks: JSON.parse(typedRow[3]),
+          schedule: typedRow[4] ? JSON.parse(typedRow[4]) : undefined,
+          createdAt: typedRow[5],
+          updatedAt: typedRow[6],
+          isFavorite: typedRow[7] === 'TRUE',
+        };
+      });
     } catch (error) {
       console.error('Failed to get plans from Google Sheets:', error);
       return [];
@@ -182,7 +189,8 @@ class GoogleSheetsPlanRepository implements PlanRepository {
     return updated;
   }
 
-  async delete(id: PlanId): Promise<void> {
+  async delete(_planId: PlanId): Promise<void> {
+    void _planId;
     console.warn('Delete operation not fully implemented for Google Sheets');
   }
 
@@ -213,15 +221,18 @@ class GoogleSheetsSessionRepository implements SessionRepository {
       const data = await googleSheetsService.getRange('Sessions', 'A2:H1000');
       if (!data.values) return [];
       
-      const sessions = data.values.map((row: any[]) => ({
-        id: row[0],
-        userId: row[1],
-        planId: row[2] || undefined,
-        startedAt: row[3],
-        endedAt: row[4] || undefined,
-        notes: row[5] || undefined,
-        items: JSON.parse(row[6]),
-      }));
+      const sessions = data.values.map((row: unknown[]) => {
+        const typedRow = row as string[];
+        return {
+          id: typedRow[0],
+          userId: typedRow[1],
+          planId: typedRow[2] || undefined,
+          startedAt: typedRow[3],
+          endedAt: typedRow[4] || undefined,
+          notes: typedRow[5] || undefined,
+          items: JSON.parse(typedRow[6]),
+        };
+      });
       
       return sessions.filter((s: SessionEntry) => s.userId === userId);
     } catch (error) {
@@ -235,17 +246,18 @@ class GoogleSheetsSessionRepository implements SessionRepository {
       const data = await googleSheetsService.getRange('Sessions', 'A2:H1000');
       if (!data.values) return null;
       
-      const row = data.values.find((r: any[]) => r[0] === id);
+      const row = data.values.find((r: unknown[]) => (r as string[])[0] === id);
       if (!row) return null;
       
+      const typedRow = row as string[];
       return {
-        id: row[0],
-        userId: row[1],
-        planId: row[2] || undefined,
-        startedAt: row[3],
-        endedAt: row[4] || undefined,
-        notes: row[5] || undefined,
-        items: JSON.parse(row[6]),
+        id: typedRow[0],
+        userId: typedRow[1],
+        planId: typedRow[2] || undefined,
+        startedAt: typedRow[3],
+        endedAt: typedRow[4] || undefined,
+        notes: typedRow[5] || undefined,
+        items: JSON.parse(typedRow[6]),
       };
     } catch (error) {
       console.error('Failed to get session from Google Sheets:', error);
@@ -272,7 +284,8 @@ class GoogleSheetsSessionRepository implements SessionRepository {
     return updated;
   }
 
-  async delete(id: SessionId): Promise<void> {
+  async delete(_sessionId: SessionId): Promise<void> {
+    void _sessionId;
     console.warn('Delete operation not fully implemented for Google Sheets');
   }
 

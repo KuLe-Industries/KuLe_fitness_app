@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import type { WorkoutPlan, PlanExerciseBlock, Exercise, ExerciseDefaults } from '@/domain/types';
+import type { WorkoutPlan, PlanExerciseBlock, Exercise } from '@/domain/types';
 import { planRepo } from '@/domain/repositories/impl';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
@@ -103,7 +102,6 @@ export default function PlanEditor({ plan, exercises, onSave, onCancel }: PlanEd
       <div className="mb-4">
         <h3 className="text-lg font-medium mb-2">Exercises</h3>
         {blocks.map((block, index) => {
-          const exercise = exercises.find((e) => e.id === block.exerciseId);
           return (
             <div
               key={index}

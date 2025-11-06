@@ -1,39 +1,37 @@
 import { useState, useEffect } from 'react';
-import { sessionRepo, exerciseRepo, planRepo } from '@/domain/repositories/impl';
+import { sessionRepo, exerciseRepo } from '@/domain/repositories/impl';
 import { useAuthStore } from '@/stores/authStore';
-import type { SessionEntry, Exercise, WorkoutPlan } from '@/domain/types';
+import type { SessionEntry, Exercise } from '@/domain/types';
 import LineChart from '@/components/charts/LineChart';
 import BarChart from '@/components/charts/BarChart';
 import DatePicker from '@/components/common/DatePicker';
 import Button from '@/components/common/Button';
 import { exportToFile, importFromFile } from '@/utils/export';
-import { format, subDays, subWeeks } from 'date-fns';
+import { format, subWeeks } from 'date-fns';
 import { toast } from 'sonner';
 
 export default function Progress() {
   const { user } = useAuthStore();
   const [sessions, setSessions] = useState<SessionEntry[]>([]);
   const [exercises, setExercises] = useState<Exercise[]>([]);
-  const [plans, setPlans] = useState<WorkoutPlan[]>([]);
   const [startDate, setStartDate] = useState(format(subWeeks(new Date(), 4), 'yyyy-MM-dd'));
   const [endDate, setEndDate] = useState(format(new Date(), 'yyyy-MM-dd'));
+
+  const loadData = async () => {
+    if (!user) return;
+    const [allSessions, allExercises] = await Promise.all([
+      sessionRepo.getByDateRange(user.id, startDate, endDate),
+      exerciseRepo.getAll(),
+    ]);
+    setSessions(allSessions);
+    setExercises(allExercises);
+  };
 
   useEffect(() => {
     if (!user) return;
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, startDate, endDate]);
-
-  const loadData = async () => {
-    if (!user) return;
-    const [allSessions, allExercises, allPlans] = await Promise.all([
-      sessionRepo.getByDateRange(user.id, startDate, endDate),
-      exerciseRepo.getAll(),
-      planRepo.getAll(),
-    ]);
-    setSessions(allSessions);
-    setExercises(allExercises);
-    setPlans(allPlans);
-  };
 
   // Calculate metrics
   const totalSessions = sessions.length;

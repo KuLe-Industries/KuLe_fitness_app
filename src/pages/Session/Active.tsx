@@ -1,7 +1,5 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import type { WorkoutPlan, Exercise, SessionItem } from '@/domain/types';
-import { exerciseRepo } from '@/domain/repositories/impl';
 import { useSessionStore } from '@/stores/sessionStore';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
@@ -16,9 +14,8 @@ interface ActiveProps {
 }
 
 export default function Active({ plan, exercises, onEnd }: ActiveProps) {
-  const navigate = useNavigate();
   const currentSession = useSessionStore((state) => state.currentSession);
-  const { updateSessionItem, completeSet, endSession } = useSessionStore();
+  const { completeSet, endSession } = useSessionStore();
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   const [showPartialDialog, setShowPartialDialog] = useState(false);
   const [partialData, setPartialData] = useState({ reps: 0, load: 0 });
