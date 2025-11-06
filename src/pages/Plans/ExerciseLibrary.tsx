@@ -3,6 +3,7 @@ import { exerciseRepo } from '@/domain/repositories/impl';
 import type { Exercise } from '@/domain/types';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
+import Select from '@/components/common/Select';
 import Dialog from '@/components/common/Dialog';
 import { toast } from 'sonner';
 
@@ -81,7 +82,7 @@ export default function ExerciseLibrary({ exercises, onUpdate }: ExerciseLibrary
         />
         <Select
           value={selectedMuscleGroup}
-          onChange={(e) => setSelectedMuscleGroup(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedMuscleGroup(e.target.value)}
           options={[
             { value: '', label: 'All Muscle Groups' },
             ...muscleGroups.map((g) => ({ value: g, label: g })),

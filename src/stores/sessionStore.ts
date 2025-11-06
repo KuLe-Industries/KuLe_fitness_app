@@ -84,20 +84,20 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       updatedSession.items.push(item);
     }
 
-    let set = item.sets.find((s) => s.setIndex === setIndex);
-    if (!set) {
-      set = {
+    let setItem = item.sets.find((s) => s.setIndex === setIndex);
+    if (!setItem) {
+      setItem = {
         setIndex,
         plannedReps: item.planned.reps,
         completedReps: completed ? actualReps || item.planned.reps : undefined,
         load,
         completedAt: completed ? new Date().toISOString() : undefined,
       };
-      item.sets.push(set);
+      item.sets.push(setItem);
     } else {
-      set.completedReps = completed ? actualReps || set.plannedReps : undefined;
-      set.load = load;
-      set.completedAt = completed ? new Date().toISOString() : undefined;
+      setItem.completedReps = completed ? actualReps || setItem.plannedReps : undefined;
+      setItem.load = load;
+      setItem.completedAt = completed ? new Date().toISOString() : undefined;
     }
 
     localStorage.setItem('kule_active_session', JSON.stringify(updatedSession));

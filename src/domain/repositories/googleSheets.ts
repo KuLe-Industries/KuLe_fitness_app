@@ -175,8 +175,9 @@ class GoogleSheetsPlanRepository implements PlanRepository {
       id: uuidv4(),
       createdAt: now,
       updatedAt: now,
+      isFavorite: plan.isFavorite ?? false,
     };
-    await savePlanToSheets(newPlan);
+    await savePlanToSheets({ ...newPlan, isFavorite: newPlan.isFavorite ?? false });
     return newPlan;
   }
 
@@ -185,7 +186,7 @@ class GoogleSheetsPlanRepository implements PlanRepository {
     if (!existing) throw new Error(`Plan ${id} not found`);
     
     const updated = { ...existing, ...updates, updatedAt: new Date().toISOString() };
-    await savePlanToSheets(updated);
+    await savePlanToSheets({ ...updated, isFavorite: updated.isFavorite ?? false });
     return updated;
   }
 
@@ -198,15 +199,13 @@ class GoogleSheetsPlanRepository implements PlanRepository {
     const plan = await this.getById(id);
     if (!plan) throw new Error(`Plan ${id} not found`);
     
-    const duplicated: Omit<WorkoutPlan, 'id' | 'createdAt' | 'updatedAt'> = {
-      ...plan,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id: _id, createdAt: _createdAt, updatedAt: _updatedAt, ...duplicated } = plan;
+    return this.create({
+      ...duplicated,
       name: newName,
       isFavorite: false,
-    };
-    delete (duplicated as WorkoutPlan).id;
-    delete (duplicated as WorkoutPlan).createdAt;
-    delete (duplicated as WorkoutPlan).updatedAt;
-    return this.create(duplicated);
+    });
   }
 
   async getFavorites(): Promise<WorkoutPlan[]> {
